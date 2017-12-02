@@ -15,7 +15,7 @@ public class object
         perter.calc();
         perter.calcate(100);
 
-
+        System.out.println("result is :" + perter.calcate2(29, 54));
     }
 }
 
@@ -57,6 +57,13 @@ class Person
             result += i;
         }
         System.out.println("the result is:" + result);
+    }
+
+    public int calcate2(int num, int num2)
+    {
+        int sum = num + num2;
+
+        return sum;
     }
 
 }
