@@ -1,0 +1,62 @@
+http协议笔记
+1、http协议全称 超文本传输协议
+
+2、工作在TCP/IP协议基础之上,所有的www文件都必须遵守这个标准, http最初的目的是为了提供一种发布和接受html页面的方法
+   web开发数据的传输都依赖于http协议
+
+3、完整的http请求包括如下部分：
+        1、 请求行
+        2、消息头
+        3、消息体（实体内容，具体数据信息）
+    
+    例: OPTIONS /message/num HTTP/1.1        // 请求行  表示发送的options请求，嗅探  请求资源是 /message/num HTTP/1.1
+        Accept:*/*                          //请求报头  表示客户端可以接受任何数据类型,图片，文本，视频等
+        Accept-Encoding:gzip, deflate       //表示接受什么样的数据压缩格式       
+        Accept-Language:zh-CN,zh;q=0.9      //页面语言
+        Access-Control-Request-Headers:authorization,x-request-uri
+        Access-Control-Request-Method:GET
+        Referer:http://www.baidu.com       //表示请求从哪里来的，例如从百度跳转到sohu，  referer是www.baidu.com，可以做防盗链，根据referer来限制来源请求
+        Cache-Control:no-cache          //缓存
+        Connection:keep-alive           //
+        Host:192.168.50.22:9790         //主机 默认80
+        Origin:http://192.168.50.22:9781
+        Pragma:no-cache
+        User-Agent:Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36  //告诉服务器请求来源的浏览器内核，操作系统
+
+4、流程
+    1、browser  ---------->(HTTP协议)----------->  server   //该server中将http请求内容进行二次封装（加入新的内容）,方便获取
+    2、http协议本身未限制数据大小，浏览器会限制传输数据的大小，( get请求，url长度为2k+35), post请求无限制
+    
+5、http常用的请求头
+    if-Modified-Since:Tue,11 Julxxxxxx   //修改时间
+
+6、http请求不是固定的，是根据实际情况变化的，例如Referer 
+
+7、http响应,
+        Access-Control-Allow-Headers:Authorization,X-Requested-With,X-Version,X-Request-Uri,X-Request-Origin
+        Access-Control-Allow-Methods:GET,POST,PUT,DELETE,HEAD,OPTIONS,DOC,PATCH,VIEW
+        Access-Control-Allow-Origin:*
+        Access-Control-Expose-Headers:X-Powered-By,X-Request-Id,X-XSS-Protection,X-Version
+        Access-Control-Max-Age:2592000
+        Cache-conontrol: private                //缓存  
+        Connection:keep-alive
+        Content-Encoding:gzip
+        Content-Type:text/html; charset=UTF-8   //文档类型
+        Date:Wed, 06 Dec 2017 06:35:16 GMT      //告诉浏览器请求页面的时间
+        Server:nginx
+        Transfer-Encoding:chunked
+        Vary:Accept-Encoding
+        X-Powered-By:phpest/0.7.31
+        X-Request-Id:68839e59ad76bf6f453993c0f602dcd5
+        X-XSS-Protection:1; mode=block
+
+8、状态码（常用）
+    302 例如：服务器向响应http头写入信息，location: x.html， 状态码是 302,告诉浏览器去重新跳转到 location的url
+    用法：php为例， header("Location: b.html");
+    细节:302也可以让其跳转到外网去
+
+    304 资源未修改，无需重新获取，例如：请求一个带图片的页面，发送两个请求，第一次请求，将内容请求回来，第二次发送请求，将图片资源请求回来，两个请求都是响应200,
+    若是第二次请求，第一次请求返回200，第二次浏览器请求图片，服务器判断 If-Modified-Since 的日期，是否在此日期后，资源未修改，如果未修改，
+    返回304，表示资源未修改，让浏览器读取缓存即可,不响应图片内容
+
+    404 页面不存在 
